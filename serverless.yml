@@ -1,0 +1,26 @@
+service: whatsapp-fastbot
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-2
+  stage: dev
+
+functions:
+  api:
+    handler: dist/handler.handler
+    events:
+      - http:
+          path: webhook
+          method: post
+
+plugins:
+  - serverless-offline
+
+package:
+  individually: true
+  excludeDevDependencies: true
+
+custom:
+  serverless-offline:
+    httpPort: 3000
