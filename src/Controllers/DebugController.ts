@@ -1,33 +1,28 @@
-
-// create a deug controller similiar to TextController.ts
 import { FastifyRequest, FastifyReply } from 'fastify';
-import Fastify from 'fastify';
-import { textInterface } from '../Model/interfaces';
+import { FastifyInstance } from 'fastify';
+import formbody from '@fastify/formbody'; // You MUST register this somewhere in your app
 
-// DebugController handles debugging operations
 export class DebugController {
-    private fastify: any;
+    private fastify: FastifyInstance;
 
-    constructor(fastifyInstance: any) {
+    constructor(fastifyInstance: FastifyInstance) {
         this.fastify = fastifyInstance;
         this.registerRoutes();
     }
 
     private registerRoutes() {
-        this.fastify.post('/debug', this.handleDebug.bind(this));
+        this.fastify.post('/', this.handleDebug.bind(this));
     }
 
     private async handleDebug(request: FastifyRequest, reply: FastifyReply) {
-        const { body, id, from, valid, error }: textInterface = request.body as textInterface;
+        console.log('Debug');
+        const { Body, From } = request.body as { Body: string; From: string };
 
-        console.log('Debugging text:', body, 'From:', from);
+        console.log('Debugging request:', request.body);
+        console.log(`Message received from ${From}: ${Body}`);
 
-        if (!valid) {
-            return reply.status(400).send({ error: error || 'Invalid debug text' });
-        }
-
-        // Process the debug text here (e.g., log to console, send a response, etc.)
-        
-        reply.send({ message: `Debug text received from ${from}: ${body}` });
+        reply
+            .type('text/xml')
+            .send(`<Response><Message>You said: ${Body}</Message></Response>`);
     }
 }

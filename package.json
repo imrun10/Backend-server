@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/formbody": "^8.0.2",
     "aws-sdk": "^2.1692.0",
     "fastify": "^5.4.0",
     "serverless-http": "^3.2.0",
