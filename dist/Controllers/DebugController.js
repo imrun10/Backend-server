@@ -10,24 +10,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DebugController = void 0;
-// DebugController handles debugging operations
 class DebugController {
     constructor(fastifyInstance) {
         this.fastify = fastifyInstance;
         this.registerRoutes();
     }
     registerRoutes() {
-        this.fastify.post('/debug', this.handleDebug.bind(this));
+        this.fastify.post('/', this.handleDebug.bind(this));
     }
     handleDebug(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { body, id, from, valid, error } = request.body;
-            console.log('Debugging text:', body, 'From:', from);
-            if (!valid) {
-                return reply.status(400).send({ error: error || 'Invalid debug text' });
-            }
-            // Process the debug text here (e.g., log to console, send a response, etc.)
-            reply.send({ message: `Debug text received from ${from}: ${body}` });
+            console.log('Debug');
+            const { Body, From } = request.body;
+            console.log('Debugging request:', request.body);
+            console.log(`Message received from ${From}: ${Body}`);
+            reply
+                .type('text/xml')
+                .send(`<Response><Message>You said: ${Body}</Message></Response>`);
         });
     }
 }

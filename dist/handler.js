@@ -20,8 +20,9 @@ if (process.env.IS_SERVERLESS === 'true') {
 */
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const app = yield (0, index_1.buildApp)(); // ✅ Await it here!
         yield app.listen({ port: 3000, host: '0.0.0.0' });
-        console.log('Server listening on http://localhost:3000');
+        console.log('🚀 Server listening on http://localhost:3000');
     }
     catch (err) {
         console.error('Error starting server:', err);
