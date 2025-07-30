@@ -5,8 +5,8 @@ Imran
 [] Update main controller to manage regular texts to send it to the text controller
 [] Update text controller
 [] start seeing hosting on AWS and get the lamba function step
-[] link meta account with twilio account 
-
+[] l`ink meta account with twilio account 
+`
 Eman
 [] connecting open ai api to the ai controller debug accepted messages and the other one is an actual response 
 [] make the bot behave in a strict specific way using instructions and notion

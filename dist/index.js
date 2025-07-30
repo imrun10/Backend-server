@@ -17,12 +17,16 @@ const fastify_1 = __importDefault(require("fastify"));
 const DebugController_1 = require("./Controllers/DebugController");
 const TextController_1 = require("./Controllers/TextController");
 const formbody_1 = __importDefault(require("@fastify/formbody"));
+const mainController_1 = require("./Controllers/mainController");
+const dotenv_1 = __importDefault(require("dotenv"));
 function buildApp() {
     return __awaiter(this, void 0, void 0, function* () {
         const fastify = (0, fastify_1.default)();
-        yield fastify.register(formbody_1.default); // <== THIS IS KEY 🗝️
-        new DebugController_1.DebugController(fastify);
-        new TextController_1.TextController(fastify);
+        dotenv_1.default.config();
+        yield fastify.register(formbody_1.default);
+        new mainController_1.mainController(fastify, new TextController_1.TextController(fastify), // Pass the TextController instance
+        new DebugController_1.DebugController(fastify) // Pass the DebugController instance
+        );
         return fastify;
     });
 }

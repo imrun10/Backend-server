@@ -9,25 +9,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DebugController = void 0;
-class DebugController {
-    constructor(fastifyInstance) {
+exports.mainController = void 0;
+const ai_1 = require("../utils/ai");
+// Now we create the class that manages all related controllers
+class mainController {
+    constructor(fastifyInstance, textController, debugController) {
         this.fastify = fastifyInstance;
         this.registerRoutes();
     }
     registerRoutes() {
-        this.fastify.post('/deubg', this.handleDebug.bind(this));
+        // All messages will hit this route
+        this.fastify.post('/', this.handleRequest.bind(this));
     }
-    handleDebug(request, reply) {
+    handleRequest(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('Debug');
+            console.log('Handling request');
             const { Body, From } = request.body;
-            console.log('Debugging request:', request.body);
+            console.log('Request details:', request.body);
             console.log(`Message received from ${From}: ${Body}`);
+            let tempRequest = request.body;
+            let message = tempRequest.body;
+            console.log('Message:', message);
+            if (!message) {
+                message = Body;
+            }
+            const aiReply = yield (0, ai_1.getAIResponse)(message);
+            console.log('AI Reply:', aiReply);
             reply
                 .type('text/xml')
-                .send(`<Response><Message>You said: ${Body}</Message></Response>`);
+                .send(`<Response><Message>${aiReply}</Message></Response>`);
         });
     }
 }
-exports.DebugController = DebugController;
+exports.mainController = mainController;

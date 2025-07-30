@@ -11,7 +11,7 @@ export class DebugController {
     }
 
     private registerRoutes() {
-        this.fastify.post('/', this.handleDebug.bind(this));
+        this.fastify.post('/deubg', this.handleDebug.bind(this));
     }
 
     private async handleDebug(request: FastifyRequest, reply: FastifyReply) {
