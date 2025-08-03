@@ -1,24 +1,42 @@
 import { buildApp } from './index';
-import serverless from 'serverless-http';
+import awsLambdaFastify from '@fastify/aws-lambda';
 
-const app = buildApp();
+let cachedHandler: any;
 
-// i will uncomment this when we are ready to move this to aws and then i will think of a solution to do serverless deploment and local development
-/*
-if (process.env.IS_SERVERLESS === 'true') {
-  console.log('Running in serverless mode');
-  module.exports.handler = serverless(app);
-} else {
-*/  
-const start = async () => {
-  try {
-    const app = await buildApp(); // ✅ Await it here!
-    await app.listen({ port: 3000, host: '0.0.0.0' });
-    console.log('🚀 Server listening on http://localhost:3000');
-  } catch (err) {
-    console.error('Error starting server:', err);
-    process.exit(1);
+const IS_SERVERLESS = process.env.IS_SERVERLESS === 'true';
+
+// This is defined at top-level — VALID EXPORT!
+// checking
+export const handler = async (event: any, context: any) => {
+  if (IS_SERVERLESS) {
+    console.log('Running in serverless mode');
+    if (!cachedHandler) {
+      const app = await buildApp();
+      cachedHandler = awsLambdaFastify(app);
+    }
+    return cachedHandler(event, context);
   }
+
+  return {
+    statusCode: 500,
+    body: JSON.stringify({
+      message: "This Lambda function is meant to be run in serverless mode only."
+    })
+  };
 };
 
-start();
+// Local dev runner
+if (!IS_SERVERLESS) {
+  const start = async () => {
+    try {
+      const app = await buildApp();
+      await app.listen({ port: 3000, host: '0.0.0.0' });
+      console.log('Server listening on http://localhost:3000');
+    } catch (err) {
+      console.error('Error starting server:', err);
+      process.exit(1);
+    }
+  };
+
+  start();
+}

@@ -1,52 +1,65 @@
+// src/Controllers/mainController.ts
 
 import { FastifyRequest, FastifyReply } from 'fastify';
-import Fastify from 'fastify';
 import { FastifyInstance } from 'fastify';
-import { textInterface } from '../Model/interfaces';
 import { DebugController } from './DebugController';
 import { TextController } from './TextController';
-import { getAIResponse } from '../utils/ai';
+import { AIController } from './AIController';
 
-
-
-
-// Now we create the class that manages all related controllers
-
-
-export class mainController {
-     private fastify: FastifyInstance;
-    
-        constructor(fastifyInstance: FastifyInstance, textController: TextController, debugController: DebugController) {
-            this.fastify = fastifyInstance;
-            this.registerRoutes();
-        }
-    
-        private registerRoutes() {
-            // All messages will hit this route
-            this.fastify.post('/', this.handleRequest.bind(this));
-        }
-
-
-private async handleRequest(request: FastifyRequest, reply: FastifyReply) {
-    console.log('Handling request');
-    const { Body, From } = request.body as { Body: string; From: string };
-
-    console.log('Request details:', request.body);
-    console.log(`Message received from ${From}: ${Body}`);
-
-    let tempRequest = request.body as any;
-    let message = tempRequest.body;
-    console.log('Message:', message);
-    if (!message) {
-       message = Body
-    }
-
-    const aiReply = await getAIResponse(message);
-    console.log('AI Reply:', aiReply);
-
-    reply
-        .type('text/xml')
-        .send(`<Response><Message>${aiReply}</Message></Response>`);
+export type MainBody = {
+    Name: string,
+    body: string;
 }
+export class MainController {
+  private fastify: FastifyInstance;
+  private aiController: AIController;
 
+  constructor(
+    fastifyInstance: FastifyInstance,
+    textController: TextController,
+    debugController: DebugController,
+    aiController: AIController
+  ) {
+    this.fastify = fastifyInstance;
+    this.aiController = aiController;
+    this.registerRoutes();
+  }
+
+  private registerRoutes() {
+    this.fastify.post('/', this.handleRequest.bind(this));
+  }
+
+  private async handleRequest(request: FastifyRequest, reply: FastifyReply) {
+    console.log('Handling request');
+    let input = request.body as any;
+    const Body = input.Body as string;
+    const From = input.WaId as string;
+    const Name = input.ProfileName as string;
+    const mainBody = {
+      Name: Name || 'Unknown',
+      body: Body || ''
+    };
+    
+
+    if (!Body || !From) {
+      reply.status(400).send('Missing message or sender info');
+      return;
+    }
+    const language = 'English'; // Default language
+
+    try {
+      const result = await this.aiController.handleMessage(mainBody, From, language);
+      console.log(`AI returned:\n${JSON.stringify(result, null, 2)}`);
+
+      // Send only the response body to Twilio
+      reply
+        .type('text/xml')
+        .send(`<Response><Message>${result.body}</Message></Response>`);
+    } catch (err: any) {
+      console.error('Error in AI handling:', err);
+      reply
+        .type('text/xml')
+        .send(`<Response><Message>language: en Name: Bot body: Sorry, something went wrong. Make sure your message is in the correct format.</Message></Response>`);
+    }
+  }
 }

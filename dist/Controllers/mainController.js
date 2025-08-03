@@ -1,4 +1,5 @@
 "use strict";
+// src/Controllers/mainController.ts
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -9,36 +10,47 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mainController = void 0;
-const ai_1 = require("../utils/ai");
-// Now we create the class that manages all related controllers
-class mainController {
-    constructor(fastifyInstance, textController, debugController) {
+exports.MainController = void 0;
+class MainController {
+    constructor(fastifyInstance, textController, debugController, aiController) {
         this.fastify = fastifyInstance;
+        this.aiController = aiController;
         this.registerRoutes();
     }
     registerRoutes() {
-        // All messages will hit this route
         this.fastify.post('/', this.handleRequest.bind(this));
     }
     handleRequest(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('Handling request');
-            const { Body, From } = request.body;
-            console.log('Request details:', request.body);
-            console.log(`Message received from ${From}: ${Body}`);
-            let tempRequest = request.body;
-            let message = tempRequest.body;
-            console.log('Message:', message);
-            if (!message) {
-                message = Body;
+            let input = request.body;
+            const Body = input.Body;
+            const From = input.WaId;
+            const Name = input.ProfileName;
+            const mainBody = {
+                Name: Name || 'Unknown',
+                body: Body || ''
+            };
+            if (!Body || !From) {
+                reply.status(400).send('Missing message or sender info');
+                return;
             }
-            const aiReply = yield (0, ai_1.getAIResponse)(message);
-            console.log('AI Reply:', aiReply);
-            reply
-                .type('text/xml')
-                .send(`<Response><Message>${aiReply}</Message></Response>`);
+            const language = 'English'; // Default language
+            try {
+                const result = yield this.aiController.handleMessage(mainBody, From, language);
+                console.log(`AI returned:\n${JSON.stringify(result, null, 2)}`);
+                // Send only the response body to Twilio
+                reply
+                    .type('text/xml')
+                    .send(`<Response><Message>${result.body}</Message></Response>`);
+            }
+            catch (err) {
+                console.error('Error in AI handling:', err);
+                reply
+                    .type('text/xml')
+                    .send(`<Response><Message>language: en Name: Bot body: Sorry, something went wrong. Make sure your message is in the correct format.</Message></Response>`);
+            }
         });
     }
 }
-exports.mainController = mainController;
+exports.MainController = MainController;

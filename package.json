@@ -3,27 +3,32 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx tsc && node dist/handler.js",
+    "dev": "IS_SERVERLESS=false nodemon --watch src --ext ts --exec \"npx ts-node src/handler.ts\"",
     "build": "npx tsc",
-    "compile": "npx serverless deploy"
+    "deploy": "npx tsc && sam build && sam deploy",
+    "clean": "rm -rf dist .aws-sam"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/aws-lambda": "^6.0.0",
     "@fastify/formbody": "^8.0.2",
+    "aws-lambda-fastify": "^2.2.0",
     "aws-sdk": "^2.1692.0",
     "dotenv": "^17.2.1",
     "fastify": "^5.4.0",
-    "serverless-http": "^3.2.0",
+    "openai": "^5.11.0",
+    "serverless": "^4.17.2",
     "serverless-offline": "^14.4.0",
     "twilio": "^5.7.3",
     "typescript": "^5.8.3",
     "undici": "^7.12.0"
   },
   "devDependencies": {
-    "@types/node": "^24.0.14"
+    "@types/aws-lambda": "^8.10.152",
+    "@types/node": "^24.0.14",
+    "nodemon": "^3.1.10"
   },
   "description": ""
 }
