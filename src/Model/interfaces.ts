@@ -6,4 +6,3 @@ export interface textInterface {
   error?: string;
 }
 
-

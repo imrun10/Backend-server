@@ -6,20 +6,12 @@ import { DebugController } from './DebugController';
 import { TextController } from './TextController';
 import { AIController } from './AIController';
 
-export type MainBody = {
-    Name: string,
-    body: string;
-}
+
 export class MainController {
   private fastify: FastifyInstance;
   private aiController: AIController;
 
-  constructor(
-    fastifyInstance: FastifyInstance,
-    textController: TextController,
-    debugController: DebugController,
-    aiController: AIController
-  ) {
+  constructor( fastifyInstance: FastifyInstance, textController: TextController, debugController: DebugController, aiController: AIController ) {
     this.fastify = fastifyInstance;
     this.aiController = aiController;
     this.registerRoutes();

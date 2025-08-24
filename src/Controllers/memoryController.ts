@@ -24,7 +24,7 @@ const FILE_PATH = path.resolve(process.env
 const TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 export class MemoryController {
-  // Short-term memory: load all matching user memories from in-memory Map or /tmp file by name
+  // Short-term memory: l oad all matching user memories from in-memory Map or /tmp file by name
   public static async loadShortTermMemory(phone: string): Promise<UserMemory[] | null> {
     const now = Date.now();
 
