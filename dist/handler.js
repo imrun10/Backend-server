@@ -13,16 +13,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
+// handler.ts
 const index_1 = require("./index");
 const aws_lambda_1 = __importDefault(require("@fastify/aws-lambda"));
+const fs_1 = __importDefault(require("fs"));
 let cachedHandler;
 const IS_SERVERLESS = process.env.IS_SERVERLESS === 'true';
-// This is defined at top-level — VALID EXPORT!
-// checking
+// ---- simple /tmp guard ----
+const MEMORY_PATH = '/tmp/user-memory.json';
+function ensureTmpMemoryFile() {
+    try {
+        if (!fs_1.default.existsSync(MEMORY_PATH)) {
+            fs_1.default.writeFileSync(MEMORY_PATH, JSON.stringify({}), 'utf8');
+            console.log('Initialized', MEMORY_PATH);
+        }
+    }
+    catch (e) {
+        console.error('Failed to init /tmp memory file:', e);
+    }
+}
+// ---------------------------
 const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* () {
     if (IS_SERVERLESS) {
         console.log('Running in serverless mode');
         if (!cachedHandler) {
+            // make sure the file exists before your app logic ever reads it
+            ensureTmpMemoryFile();
             const app = yield (0, index_1.buildApp)();
             cachedHandler = (0, aws_lambda_1.default)(app);
         }
@@ -31,12 +47,12 @@ const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* 
     return {
         statusCode: 500,
         body: JSON.stringify({
-            message: "This Lambda function is meant to be run in serverless mode only."
-        })
+            message: 'This Lambda function is meant to be run in serverless mode only.',
+        }),
     };
 });
 exports.handler = handler;
-// Local dev runner
+// Local dev runner (unchanged)
 if (!IS_SERVERLESS) {
     const start = () => __awaiter(void 0, void 0, void 0, function* () {
         try {

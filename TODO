@@ -1,20 +1,11 @@
 
 
 
-Imran
-[] Update main controller to manage regular texts to send it to the text controller
-[] Update text controller
-[] start seeing hosting on AWS and get the lamba function step
-[] l`ink meta account with twilio account 
-`
-Eman
-[] connecting open ai api to the ai controller debug accepted messages and the other one is an actual response 
-[] make the bot behave in a strict specific way using instructions and notion
-    [] the language it recieves a message it should always respond back in that exact language
-    [] it should only accept messages that are structured like this -> language :... Name:.... body:....
-    [] remmeber based on name the languag and always talk with that name that language
-    [] it should only talk about farm related topics
-    [] it should respons back in the exact same format language:... Name:... Body:....
-[] how we will be implementing security features and what we need to be wary about {technical perspective) 
+[] add the remaining dtabase function for all the use cases 20 main
+[] updte the ice breaker (make it ask the question and save it. th cha will ask more question ountil it fills that in) update the rbains of the ai
+[] make chat bot more strict 
 
 
+1. ADD a function to check if anything exist in this table it siply returns truee
+2. use it to chek if employee is new finalize unique id and implement in database first
+3. create ice vreakers based on sheet and add them
