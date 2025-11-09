@@ -3,3 +3,7 @@ tmp/
 template.yml
 .aws-sam/
 eman.md
+.vscode/
+.DS_Store
+.env
+.schema.ts

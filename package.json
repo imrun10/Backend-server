@@ -14,6 +14,7 @@
   "dependencies": {
     "@fastify/aws-lambda": "^6.0.0",
     "@fastify/formbody": "^8.0.2",
+    "@supabase/supabase-js": "^2.57.2",
     "aws-lambda-fastify": "^2.2.0",
     "aws-sdk": "^2.1692.0",
     "dotenv": "^17.2.1",

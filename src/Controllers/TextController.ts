@@ -1,7 +1,9 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import Fastify from 'fastify';
 import { textInterface } from '../Model/interfaces';
-
+/*
+CURRENTLY UNUSED CONTROLLER SHOULD TAKE SOME OF THE TEXT HANDLING LOAD OFF MAIN CONTROLLER
+*/
 
 
 // Now create a class that handles all text-related operations
